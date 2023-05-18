@@ -59,9 +59,10 @@ async function run() {
 
     app.get('/categoryData', async (req, res) => {
       const category = req.query?.category ;
-      const result = await toysCollection.find({ category: category }).toArray();
-      res.send(result)
-
+      const projection = { name: 1, toysPicture: 1, price: 1 , rating : 1 };
+      const result = await toysCollection.find({ category: category }).project(projection).toArray();
+      res.send(result);
+      
     })
 
 
