@@ -32,10 +32,19 @@ async function run() {
     await client.connect();
     const toysCollection = client.db("animalToysdb").collection("allToys");
 
+    //  get function 
     app.get('/allToys', async (req, res) => {
       const projection = { _id: 1, name: 1, sellerName: 1, category: 1, availableQuantity: 1, toysPicture: 1, price: 1 };
       const result = await toysCollection.find().project(projection).limit(20).toArray();
       res.send(result)
+    })
+
+    app.get('/searchData' , async( req , res ) => {
+        const searchName = req.query.name ;
+        const query = { name : searchName }
+        const result = await toysCollection.find(query).toArray();
+        res.send(result)
+       
     })
 
     app.get('/toysPictures', async (req, res) => {
@@ -64,25 +73,11 @@ async function run() {
     })
 
     app.get('/categoryData', async (req, res) => {
-      const category = req.query?.category ;
-      const projection = { name: 1, toysPicture: 1, price: 1 , rating : 1 };
+      const category = req.query?.category;
+      const projection = { name: 1, toysPicture: 1, price: 1, rating: 1 };
       const result = await toysCollection.find({ category: category }).project(projection).toArray();
       res.send(result);
-      
-    })
 
-
-    app.post('/addAToy', async (req, res) => {
-      const addedToy = req.body;
-      const result = await toysCollection.insertOne(addedToy)
-      res.send(result)
-    })
-
-    app.delete('/myToys/:id', async (req, res) => {
-      const id = req.params.id;
-      const query = { _id: new ObjectId(id) };
-      const result = await toysCollection.deleteOne(query);
-      res.send(result)
     })
 
     app.get('/myToys/:id', async (req, res) => {
@@ -92,6 +87,14 @@ async function run() {
       res.send(result)
     })
 
+    // post function 
+    app.post('/addAToy', async (req, res) => {
+      const addedToy = req.body;
+      const result = await toysCollection.insertOne(addedToy)
+      res.send(result)
+    })
+
+    //  patch function
     app.patch('/myToys/:id', async (req, res) => {
       const id = req.params.id;
       const filter = { _id: new ObjectId(id) }
@@ -108,8 +111,13 @@ async function run() {
       res.send(result);
     })
 
-
-
+    // delete function 
+    app.delete('/myToys/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await toysCollection.deleteOne(query);
+      res.send(result)
+    })
 
 
 
