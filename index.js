@@ -39,14 +39,6 @@ async function run() {
       res.send(result)
     })
 
-    app.get('/searchData' , async( req , res ) => {
-        const searchName = req.query.name ;
-        const query = { name : searchName }
-        const result = await toysCollection.find(query).toArray();
-        res.send(result)
-       
-    })
-
     app.get('/toysPictures', async (req, res) => {
       const projection = { toysPicture: 1 };
       const result = await toysCollection.find().project(projection).limit(6).toArray();
@@ -62,15 +54,21 @@ async function run() {
 
     // get my toys 
     app.get('/myToys', async (req, res) => {
-      let query = {}
-      if (req.query?.email) {
-        query = { sellerEmail: req.query?.email }
-      }
+      const sort = req.query?.sort ;
+      query = { sellerEmail: req.query?.email }
       const projection = { name: 1, toysPicture: 1, category: 1, price: 1, availableQuantity: 1 };
-      const result = await toysCollection.find(query).project(projection).toArray();
-      res.send(result);
+       
+      if(sort == 1 || sort == -1 ){
+        const result = await toysCollection.find(query).sort({ price : parseInt(sort) }).project(projection).toArray();
+        res.send(result);
+      }
+      else {
+        const result = await toysCollection.find(query).project(projection).toArray();
+        res.send(result);
+      }
 
     })
+
 
     app.get('/categoryData', async (req, res) => {
       const category = req.query?.category;
