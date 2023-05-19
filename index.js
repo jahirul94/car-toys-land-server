@@ -38,6 +38,12 @@ async function run() {
       res.send(result)
     })
 
+    app.get('/toysPictures', async (req, res) => {
+      const projection = { toysPicture: 1 };
+      const result = await toysCollection.find().project(projection).limit(6).toArray();
+      res.send(result)
+    })
+
     app.get('/allToys/:id', async (req, res) => {
       const id = req.params.id;
       const query = { _id: new ObjectId(id) }
