@@ -59,7 +59,7 @@ async function run() {
       const projection = { name: 1, toysPicture: 1, category: 1, price: 1, availableQuantity: 1 };
        
       if(sort == 1 || sort == -1 ){
-        const result = await toysCollection.find(query).sort({ price : parseInt(sort) }).project(projection).toArray();
+        const result = await toysCollection.find(query).sort({ price : parseInt(sort) }).collation({ locale : "en_US" , numericOrdering : true }).project(projection).toArray();
         res.send(result);
       }
       else {
